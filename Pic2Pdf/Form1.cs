@@ -19,6 +19,7 @@ namespace Pic2Pdf
         public Form1()
         {
             InitializeComponent();
+            
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -56,30 +57,37 @@ namespace Pic2Pdf
         private void button3_Click(object sender, EventArgs e)
         {
             //Generate document
-            Document document = new Document();
-            var imagePath = Path.Combine(textBox2.Text, "convertPdf.pdf");
-            using (var stream = new FileStream(imagePath, FileMode.Create, FileAccess.ReadWrite, FileShare.None))
+            if (!String.IsNullOrEmpty(textBox2.Text) && listBox1.Items.Count > 0)
             {
-                PdfWriter.GetInstance(document, stream);
-
-                document.Open();
-                foreach (string itemInList in listBox1.Items)
+                Document document = new Document();
+                var outputPath = Path.Combine(textBox2.Text, "convertPdf.pdf");
+                using (var stream = new FileStream(outputPath, FileMode.Create, FileAccess.ReadWrite, FileShare.None))
                 {
-                    using (var imageStream = new FileStream(itemInList, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
-                    {
-                        var image = Image.GetInstance(imageStream);
-                        float maxWidth = document.PageSize.Width - document.LeftMargin - document.RightMargin;
-                        float maxHeight = document.PageSize.Height - document.TopMargin - document.BottomMargin;
-                        if (image.Height > maxHeight || image.Width > maxWidth)
-                            image.ScaleToFit(maxWidth, maxHeight);
-                        document.Add(image);
-                    }
-                }
-                document.Close();
-            }
+                    PdfWriter.GetInstance(document, stream);
 
-            MessageBox.Show("Generate pdf success.");
-            Application.Exit();
+                    document.Open();
+                    foreach (string itemInList in listBox1.Items)
+                    {
+                        string ext = Path.GetExtension(itemInList);
+                        if (ext != ".pdf")
+                        {
+                            using (var imageStream = new FileStream(itemInList, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                            {
+                                var image = Image.GetInstance(imageStream);
+                                float maxWidth = document.PageSize.Width - document.LeftMargin - document.RightMargin;
+                                float maxHeight = document.PageSize.Height - document.TopMargin - document.BottomMargin;
+                                if (image.Height > maxHeight || image.Width > maxWidth)
+                                    image.ScaleToFit(maxWidth, maxHeight);
+                                document.Add(image);
+                            }
+                        }
+                    }
+                    document.Close();
+                }
+
+                MessageBox.Show("Generate pdf success.");
+                Application.Exit();
+            }
         }
 
 
