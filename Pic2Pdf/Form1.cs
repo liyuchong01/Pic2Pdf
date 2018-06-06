@@ -9,6 +9,9 @@ using System.Windows.Forms;
 using iTextSharp;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
+
+
+
 using System.IO;
 
 
@@ -27,7 +30,7 @@ namespace Pic2Pdf
             OpenFileDialog openFileDialog1 = new OpenFileDialog();
             openFileDialog1.Multiselect = true;
             openFileDialog1.Title = "Select a picture";
-            openFileDialog1.Filter = "Image files (*.jpg, *.jpeg, *.jpe, *.jfif, *.png) | *.jpg; *.jpeg; *.jpe; *.jfif; *.png";
+            openFileDialog1.Filter = "files (*.jpg, *.jpeg, *.png) | *.jpg; *.jpeg; *.png" ;
             openFileDialog1.InitialDirectory = @"C:\Picture\";
 
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
@@ -64,23 +67,22 @@ namespace Pic2Pdf
                 using (var stream = new FileStream(outputPath, FileMode.Create, FileAccess.ReadWrite, FileShare.None))
                 {
                     PdfWriter.GetInstance(document, stream);
-
                     document.Open();
+
                     foreach (string itemInList in listBox1.Items)
                     {
                         string ext = Path.GetExtension(itemInList);
-                        if (ext != ".pdf")
+
+                        using (var imageStream = new FileStream(itemInList, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
                         {
-                            using (var imageStream = new FileStream(itemInList, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
-                            {
-                                var image = Image.GetInstance(imageStream);
-                                float maxWidth = document.PageSize.Width - document.LeftMargin - document.RightMargin;
-                                float maxHeight = document.PageSize.Height - document.TopMargin - document.BottomMargin;
-                                if (image.Height > maxHeight || image.Width > maxWidth)
-                                    image.ScaleToFit(maxWidth, maxHeight);
-                                document.Add(image);
-                            }
+                            var image = Image.GetInstance(imageStream);
+                            float maxWidth = document.PageSize.Width - document.LeftMargin - document.RightMargin;
+                            float maxHeight = document.PageSize.Height - document.TopMargin - document.BottomMargin;
+                            if (image.Height > maxHeight || image.Width > maxWidth)
+                                image.ScaleToFit(maxWidth, maxHeight);
+                            document.Add(image);
                         }
+
                     }
                     document.Close();
                 }

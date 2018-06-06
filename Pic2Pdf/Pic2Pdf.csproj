@@ -63,6 +63,9 @@
     <Reference Include="itextsharp">
       <HintPath>..\..\PdfSharp\itextsharp.dll</HintPath>
     </Reference>
+    <Reference Include="PdfSharp">
+      <HintPath>..\..\PdfSharp\PdfSharp.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
