@@ -24,13 +24,17 @@ namespace Pic2Pdf
         private void button1_Click(object sender, EventArgs e)
         {
             OpenFileDialog openFileDialog1 = new OpenFileDialog();
+            openFileDialog1.Multiselect = true;
             openFileDialog1.Title = "Select a picture";
             openFileDialog1.Filter = "Image files (*.jpg, *.jpeg, *.jpe, *.jfif, *.png) | *.jpg; *.jpeg; *.jpe; *.jfif; *.png";
             openFileDialog1.InitialDirectory = @"C:\Picture\";
 
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
-                listBox1.Items.Add(openFileDialog1.FileName.ToString());
+                foreach (String file in openFileDialog1.FileNames) 
+                {
+                    listBox1.Items.Add(file);
+                }
             }
         }
 
